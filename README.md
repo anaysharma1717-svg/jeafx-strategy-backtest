@@ -54,7 +54,6 @@ would be clearly above 0.
 | 12 | "Reversal shape v2" (long trend, sweep, major zones) | a stricter, more JeaFx-like setup | only 7 trades in 9 years - too rare |
 | 13 | Volume and CVD (order-flow) filters on crypto | maybe order flow confirms the good breaks | filters did not separate good from bad trades; all failed |
 | 14 | Volume-spike momentum on its own (side test) | the indicator alone looked predictive | gone on fresh, non-overlapping data |
-| 15 | 3-minute BTC, New York session only | does it work intraday? | **unfinished** - stopped by low memory; checks passed, results pending |
 
 **Main finding - adverse selection.** A limit order waiting at the zone fills *mostly when the break is failing*:
 the setups that work run away and never fill, the ones that fill keep going through the zone (27% were stopped out
@@ -74,10 +73,9 @@ on the same candle they filled). That is why tightening, widening, filtering and
 9. [Stage 7: "Reversal shape v2" - too rare to judge](#9-stage-7-reversal-shape-v2---too-rare-to-judge)
 10. [Stage 8: Volume and CVD on crypto](#10-stage-8-volume-and-cvd-on-crypto)
 11. [Side test: volume-spike momentum](#11-side-test-volume-spike-momentum)
-12. [Unfinished: 3-minute BTC in the New York session](#12-unfinished-3-minute-btc-in-the-new-york-session)
-13. [Limitations](#13-limitations)
-14. [Running it yourself](#14-running-it-yourself)
-15. [Project layout](#15-project-layout)
+12. [Limitations](#12-limitations)
+13. [Running it yourself](#13-running-it-yourself)
+14. [Project layout](#14-project-layout)
 ---
 
 ## 1. The rules in plain English
@@ -106,7 +104,7 @@ Full specification: [BRIEF.md](BRIEF.md). All settings: [config.py](config.py).
   before the cut; 63 runs, 1,112 trades, all identical), a random-walk test (on fake EUR/USD-like prices the
   strategy makes -0.02R before costs, i.e. nothing), and hand-built price patterns with known answers.
 - **Shorts are an exact mirror of longs** (same code on flipped prices), verified by tests.
-- **28 unit tests** in [tests/](tests/).
+- **26 unit tests** in [tests/](tests/).
 - **Development / holdout split** (60% / 40%), settings chosen on development data only, and later tests
   **pre-registered** in writing before being run ([results/*PREREGISTRATION.md](results/)) with lock files
   that stop accidental re-runs.
@@ -314,23 +312,7 @@ run once on Binance 2023-01 to 2026-09 (data not used for this question before).
   45% winners, negative in 3 of 4 years. **Fails the pass mark.**
 - So the "indicator alone" result in stage 8 was mostly the same move counted many times (overlapping events).
 
-## 12. Unfinished: 3-minute BTC in the New York session
-
-Pre-registered in [results/btc3m_PREREGISTRATION.md](results/btc3m_PREREGISTRATION.md): every test above on
-BTCUSDT perpetual 3-minute candles (1,183,085 candles, 2020-2026), 15-minute context instead of 4h, entries only
-09:30-16:00 New York time, flat at the close. (Free 3-minute US stock data needs an API key, so BTC was used.)
-
-The development run was **stopped by the computer running out of memory** before it finished. What completed:
-
-- **Random walk check passed**: on fake 3-minute prices, no edge before costs (original -0.15R, frozen -0.15R).
-- **Truncation check passed**: identical trades before and after cutting the data (566 trades compared).
-- **Costs are brutal on 3-minute stops**: 0.39R (frozen) to 0.58R (original) per trade, even on random data,
-  versus ~0.09R on 1h forex. Any intraday edge would have to beat that first.
-
-The grid, settings check, volume/CVD filters, direction tests and the holdout are **not run yet**; the holdout is
-untouched. Run with `py run_3m.py dev` on a machine with more memory (or fewer workers in `run_3m.py`).
-
-## 13. Limitations
+## 12. Limitations
 
 - **Short Yahoo history** (~2-3 years of hourly data): stages 1, 2 and 6 have only 50-200 trades.
 - **Rules can't copy discretion**: JeaFx picks between competing zones, reads news and Wyckoff structure and
@@ -350,13 +332,13 @@ untouched. Run with `py run_3m.py dev` on a machine with more memory (or fewer w
 - **Many tests were run**, so an occasional "significant" result is expected by chance; that is why pass marks were
   fixed in advance and borderline passes treated with suspicion. No version passed anyway.
 
-## 14. Running it yourself
+## 13. Running it yourself
 
 Price data is not stored in the repo (about 420 MB); the download scripts re-create it in `data/`.
 
 ```bash
 pip install -r requirements.txt
-py -m pytest tests            # 28 unit tests
+py -m pytest tests            # 26 unit tests
 py run_data.py                # Yahoo 1h data for 21 markets + data report
 py run_structure.py           # swings / structure charts
 py run_setups.py              # break of structure + zones, charts
@@ -366,23 +348,21 @@ py run_trade_charts.py        # 20 random trade charts
 py run_changes.py             # the rule changes, one on top of the other
 py download_histdata.py       # histdata.com forex 2015-2023 (1-minute -> 1h)
 py download_binance.py        # Binance perpetual 1h klines with taker buy volume
-py download_binance.py 3m BTCUSDT
 py run_crypto.py              # crypto development tests (volume / CVD)
-py run_3m.py report|dev|holdout
 ```
 
 One-shot scripts (`run_holdout.py`, `run_holdout_stale.py`, `run_frozen.py`, `run_zonetouch.py`, `run_v2.py`,
-`run_crypto_holdout.py`, `run_3m.py holdout`, `experiments/volume_spike/run_volume_spike.py`) refuse to run twice
+`run_crypto_holdout.py`, `experiments/volume_spike/run_volume_spike.py`) refuse to run twice
 unless given `--force`, because their results were pre-registered as single runs.
 
-## 15. Project layout
+## 14. Project layout
 
 ```
 BRIEF.md            the full specification I wrote before building
 REPORT.md           one-page summary
 config.py           every setting, with a comment
-jeafx/              the backtester: data, indicators, structure, setups, 4h context, engine, stats, v2, crypto, intraday
-tests/              28 unit tests (hand-made patterns, mirror, truncation, no-lookahead, session rules)
+jeafx/              the backtester: data, indicators, structure, setups, 4h context, engine, stats, v2, crypto
+tests/              26 unit tests (hand-made patterns, mirror, truncation, no-lookahead)
 run_*.py            one script per stage (see above)
 results/            tables (CSV), pre-registrations and lock files of every stage
 charts/             swing, zone and trade charts for visual checks

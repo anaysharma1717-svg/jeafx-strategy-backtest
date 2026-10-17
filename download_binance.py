@@ -1,10 +1,9 @@
 """Download Binance USD-M perpetual klines (monthly zips) from data.binance.vision and build one CSV per symbol
 with time, open, high, low, close, volume, taker_buy_volume (UTC).
-  1h -> data/binance/SYMBOL.csv          3m -> data/binance_3m/SYMBOL.csv
+  -> data/binance/SYMBOL.csv
 Downloaded zips go to <dir>/raw/ and are only parsed as text.
 
-Usage: py download_binance.py                 (1h, all crypto symbols in config)
-       py download_binance.py 3m BTCUSDT      (3-minute, given symbols)
+Usage: py download_binance.py [SYMBOL ...]    (1h; default: all crypto symbols in config)
 """
 import io
 import os
@@ -23,7 +22,7 @@ COLS = ["open_time", "open", "high", "low", "close", "volume", "close_time", "qu
 
 
 def out_dir(interval):
-    return config.CRYPTO_DATA_DIR if interval == "1h" else config.CRYPTO_DATA_DIR + "_" + interval
+    return config.CRYPTO_DATA_DIR
 
 
 def months():
@@ -83,8 +82,8 @@ def build(sym, interval):
 
 
 if __name__ == "__main__":
-    interval = sys.argv[1] if len(sys.argv) > 1 else "1h"
-    syms = sys.argv[2:] if len(sys.argv) > 2 else config.CRYPTO_SYMBOLS
+    interval = "1h"
+    syms = sys.argv[1:] or config.CRYPTO_SYMBOLS
     for s in syms:
         download(s, interval)
         build(s, interval)

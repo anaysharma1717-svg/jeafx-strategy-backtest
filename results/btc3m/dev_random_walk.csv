@@ -1,3 +1,0 @@
-version,trades,avg_R_before_costs,ci95_before,avg_cost_R,avg_R_after_costs,PASS (CI before costs not above 0)
-frozen,1201,-0.147,-0.246..-0.045,0.39,-0.536,True
-original,2125,-0.154,-0.231..-0.075,0.583,-0.737,True

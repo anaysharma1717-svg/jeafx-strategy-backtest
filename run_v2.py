@@ -35,14 +35,11 @@ def load(sym):
 
 
 # ---------------------------------------------------------------------------
-def simulate_exit(o, h, l, c, j, fill, stop, tgt, cost, realistic, end_cap=None):
-    """Same exit rules as the engine (stop first, only stop on the fill candle, 200-candle time exit,
-    optional session close at candle end_cap), in a long-shaped price view. Returns (exit_idx, exit_price, reason)."""
+def simulate_exit(o, h, l, c, j, fill, stop, tgt, cost, realistic):
+    """Same exit rules as the engine (stop first, only stop on the fill candle, 200-candle time exit),
+    in a long-shaped price view. Returns (exit_idx, exit_price, reason)."""
     n = len(c)
     end = min(j + config.MAX_BARS_IN_TRADE, n - 1)
-    capped = end_cap is not None and 0 <= end_cap < end
-    if capped:
-        end = int(end_cap)
     if l[j] <= stop:
         return j, stop, "stop"
     seg = slice(j + 1, end + 1)
@@ -54,10 +51,10 @@ def simulate_exit(o, h, l, c, j, fill, stop, tgt, cost, realistic, end_cap=None)
         return s1, (o[s1] if o[s1] < stop else stop), "stop"
     if t1 is not None:
         return t1, (o[t1] if o[t1] >= tgt else tgt), "target"
-    return end, c[end], ("session_close" if capped else "time" if end == j + config.MAX_BARS_IN_TRADE else "data_end")
+    return end, c[end], ("time" if end == j + config.MAX_BARS_IN_TRADE else "data_end")
 
 
-def flip_trades(df, tr, cost_mode, sess_end=None):
+def flip_trades(df, tr, cost_mode):
     """Opposite trade at the same fill candle and price, stop/target distances mirrored."""
     o, h, l, c = (df[x].to_numpy(float) for x in ("open", "high", "low", "close"))
     views = {"long": (o, h, l, c), "short": (-o, -l, -h, -c)}
@@ -70,9 +67,8 @@ def flip_trades(df, tr, cost_mode, sess_end=None):
         d_tgt = abs(t.target - t.entry_price)
         stop, tgt = fill - risk, fill + d_tgt          # in the flipped trade's own view
         vo, vh, vl, vc = views[side]
-        cap = None if sess_end is None else sess_end[int(t.entry_idx)]
         k, px, why = simulate_exit(vo, vh, vl, vc, int(t.entry_idx), fill, stop, tgt, t.cost_per_side,
-                                   cost_mode == "realistic", end_cap=cap)
+                                   cost_mode == "realistic")
         rb = (px - fill) / risk
         n_costs = 2 + (1 if (cost_mode == "realistic" and why == "stop") else 0)
         out.append({"symbol": t.symbol, "entry_idx": t.entry_idx, "real_R": t.r_after_costs,

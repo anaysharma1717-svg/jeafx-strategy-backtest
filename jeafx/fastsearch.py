@@ -1,6 +1,6 @@
 """Find the first index >= start where arr <op> val, scanning in growing chunks.
-Same answer as np.nonzero(arr[start:] <op> val)[0][0] + start, but fast when the hit is near `start`
-(important on long 3-minute series). Returns len(arr) if there is no hit."""
+Same answer as np.nonzero(arr[start:] <op> val)[0][0] + start, but fast when the hit is near `start`.
+Returns len(arr) if there is no hit."""
 import numpy as np
 
 _OPS = {"<=": np.less_equal, ">=": np.greater_equal, "<": np.less, ">": np.greater}

@@ -123,7 +123,7 @@ def _sgn(side):
 
 
 def run(m: Market, v: dict, cost_mode: str = "realistic", trade_from=None, cost_bp_override=None, planner=None,
-        setup_filter=None, session=None):
+        setup_filter=None):
     """Backtest one symbol with one variant and one cost mode.
     trade_from: optional timestamp; breaks before it are used for zone/context bookkeeping but not traded.
     planner: optional object for a different setup (e.g. Reversal shape v2). After the BoS / zone / imbalance
@@ -132,9 +132,6 @@ def run(m: Market, v: dict, cost_mode: str = "realistic", trade_from=None, cost_
              placed. Without a planner the frozen JeaFx logic below runs unchanged.
     setup_filter: optional callable(s) -> "" (keep) or a reason string (skip), applied after every frozen rule,
              just before the order is placed (crypto volume / CVD experiment).
-    session: optional object with `in_session` (bool per candle) and `sess_end` (index of the session's last candle,
-             -1 outside). Setups only if the BoS candle is in session; orders can fill only until the session's last
-             candle (then cancelled, "session_end"); trades are closed at that candle's close ("session_close").
     Returns (trades DataFrame, setup log DataFrame)."""
     df = m.df
     n = len(df)
@@ -158,14 +155,7 @@ def run(m: Market, v: dict, cost_mode: str = "realistic", trade_from=None, cost_
         o, h, l, c = view.get(p["side"])
         lim = p["entry_s"]
         window_end = p["bos_idx"] + v["max_wait"]              # touch allowed on the next max_wait candles
-        by_session = False
-        if session is not None and session.sess_end[p["bos_idx"]] < window_end:
-            window_end, by_session = int(session.sess_end[p["bos_idx"]]), True
         first, last = p["bos_idx"] + 1, min(window_end, n - 1, upto)
-        if first > last and by_session and last == window_end:
-            p["log"]["status"] = "session_end"              # BoS on the session's last candle
-            pending = None
-            return
         if first > last:
             return
         hit = np.nonzero(l[first:last + 1] <= lim)[0]
@@ -180,7 +170,7 @@ def run(m: Market, v: dict, cost_mode: str = "realistic", trade_from=None, cost_
                 return
         if jf is None:
             if last == min(window_end, n - 1):                 # window is over
-                p["log"]["status"] = ("session_end" if by_session else "expired") if window_end <= n - 1 else "data_end"
+                p["log"]["status"] = "expired" if window_end <= n - 1 else "data_end"
                 pending = None
             return
         j = jf                            # first touch: the zone is used whatever happens now
@@ -223,9 +213,6 @@ def run(m: Market, v: dict, cost_mode: str = "realistic", trade_from=None, cost_
         stop = p["stop_s"]
         tgt_hit_lvl = tgt + (cost if realistic else 0.0)
         end = min(j + config.MAX_BARS_IN_TRADE, n - 1)
-        sess_close = session is not None and 0 <= session.sess_end[j] < end
-        if sess_close:
-            end = int(session.sess_end[j])                     # flat at the session's last candle
         exit_idx, exit_px, why = None, None, None
         # fill candle: stop only
         if l[j] <= stop:
@@ -252,8 +239,7 @@ def run(m: Market, v: dict, cost_mode: str = "realistic", trade_from=None, cost_
                 exit_idx, why = t1, "target"
                 exit_px = o[t1] if o[t1] >= tgt else tgt
             else:
-                exit_idx, why = end, ("session_close" if sess_close else
-                                      "time" if end == j + config.MAX_BARS_IN_TRADE else "data_end")
+                exit_idx, why = end, "time" if end == j + config.MAX_BARS_IN_TRADE else "data_end"
                 exit_px = c[end]
         # MFE / MAE in planned R, counting only prices known to come after the fill and before the exit
         if exit_idx == j:
@@ -364,9 +350,6 @@ def run(m: Market, v: dict, cost_mode: str = "realistic", trade_from=None, cost_
             if why:
                 rec["status"] = "filtered:" + why
                 continue
-        if session is not None and not session.in_session[i]:
-            rec["status"] = "outside_session"
-            continue
         if trade_from is not None and s["bos_time"] < trade_from:
             rec["status"] = "before_trade_window"
             continue

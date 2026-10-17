@@ -12,7 +12,7 @@ when it is written as exact rules and tested properly.
 - Wrote the method as exact rules ([BRIEF.md](BRIEF.md)) and built a Python backtester from scratch.
 - 1-hour entries, 4-hour context. Realistic costs (spread, fees, slippage) and a zero-cost run for comparison.
 - Proved there is no lookahead (truncation test), no fake edge (random-walk test), and that shorts mirror longs
-  (28 unit tests). Checked trades by eye on charts - which found one bug, fixed before the final tests.
+  (26 unit tests). Checked trades by eye on charts - which found one bug, fixed before the final tests.
 - Split data into development and holdout; wrote every later test down in advance ("pre-registration") and ran it
   once, with lock files to stop re-runs.
 
@@ -51,5 +51,4 @@ the improvements tried changes that. This tests my rule-based reading of his fre
 discretionary trading - and is not financial advice.
 
 ## Limitations
-Short Yahoo history (2-3 years), rule interpretations that others might make differently, estimated costs, and a
-3-minute intraday test that is not finished yet (stopped by low memory; its sanity checks passed).
+Short Yahoo history (2-3 years), rule interpretations that others might make differently, and estimated costs.

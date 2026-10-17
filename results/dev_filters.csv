@@ -1,0 +1,6 @@
+filter,trades_without_filter,trades_with_filter,removed,avg_R_kept,avg_R_removed,removed_ci95,helps?
+strong close (vs close),380,194,196,-0.372,-0.429,-0.669..-0.190,True
+imbalance required,379,194,193,-0.372,0.071,-0.231..+0.392,False
+4h context rule,584,194,407,-0.372,0.118,-0.148..+0.408,False
+room check 1.5R,194,194,0,-0.372,,,False
+liquidity sweep (optional),194,53,142,-0.323,-0.396,-0.637..-0.127,True

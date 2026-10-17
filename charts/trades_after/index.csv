@@ -1,0 +1,21 @@
+chart,symbol,side,before,after
+trade_01_AAPL_short.png,AAPL,short,stop -1.04R,no trade (target_before_fill)
+trade_02_AUDUSDX_long.png,AUDUSD=X,long,stop -1.08R,target +2.19R
+trade_03_AUDUSDX_short.png,AUDUSD=X,short,stop -1.09R,no trade (in_position)
+trade_04_ESF_long.png,ES=F,long,stop -1.10R,stop -1.08R
+trade_05_ESF_long.png,ES=F,long,stop -1.09R,stop -1.07R
+trade_06_ESF_short.png,ES=F,short,stop -1.09R,stop -1.06R
+trade_07_EURJPYX_long.png,EURJPY=X,long,stop -1.10R,no trade (target_before_fill)
+trade_08_GBPJPYX_long.png,GBPJPY=X,long,stop -1.09R,stop -1.07R
+trade_09_GBPJPYX_short.png,GBPJPY=X,short,stop -1.14R,stop -1.11R
+trade_10_GBPUSDX_long.png,GBPUSD=X,long,stop -1.33R,no trade (target_before_fill)
+trade_11_GBPUSDX_long.png,GBPUSD=X,long,stop -1.23R,no trade (target_before_fill)
+trade_12_GBPUSDX_short.png,GBPUSD=X,short,target +1.94R,target +1.95R
+trade_13_GBPUSDX_long.png,GBPUSD=X,long,stop -1.09R,stop -1.06R
+trade_14_GCF_long.png,GC=F,long,stop -1.04R,no trade (target_before_fill)
+trade_15_META_long.png,META,long,stop -0.08R,no trade (target_before_fill)
+trade_16_NQF_long.png,NQ=F,long,stop -1.03R,stop -1.02R
+trade_17_NVDA_long.png,NVDA,long,stop -1.03R,no trade (target_before_fill)
+trade_18_RELIANCE.NS_short.png,RELIANCE.NS,short,stop -0.59R,no trade (expired)
+trade_19_RELIANCE.NS_short.png,RELIANCE.NS,short,target +1.89R,target +1.92R
+trade_20_USDCADX_short.png,USDCAD=X,short,stop -1.10R,no trade (target_before_fill)

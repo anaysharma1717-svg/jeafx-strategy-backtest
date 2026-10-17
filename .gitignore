@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+# downloaded price data (re-create it with the download scripts, see README)
+data/
+p.out

@@ -1,0 +1,2 @@
+Holdout run once with: qualifying setting with the highest avg R: zz1.5|body0.5|avg1.5|room3.0
+{'bos_rule': 'strong_close', 'require_imbalance': True, 'use_htf_context': True, 'target_mode': '4h', 'use_liquidity_sweep': False, 'use_breakeven': False, 'zigzag': np.float64(1.5), 'body_range_min': np.float64(0.5), 'body_avg_mult': np.float64(1.5), 'min_room_r': np.float64(3.0)}

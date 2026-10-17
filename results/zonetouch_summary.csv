@@ -1,0 +1,13 @@
+group,horizon,setups,avg_move_ATR,right_dir_%,random_avg_ATR,random_right_dir_%,difference,diff_ci95,ci_includes_0
+all,5,990,-0.098,50.6,-0.016,49.3,-0.083,-0.216..+0.052,True
+all,10,990,-0.021,50.6,-0.006,49.8,-0.015,-0.175..+0.148,True
+all,20,990,-0.041,50.4,-0.018,50.0,-0.023,-0.231..+0.187,True
+all,50,990,-0.215,49.6,-0.031,49.4,-0.184,-0.528..+0.157,True
+touch <= 10 candles after BoS,5,306,-0.287,48.0,-0.019,49.2,-0.268,-0.499..-0.035,False
+touch <= 10 candles after BoS,10,306,-0.285,44.8,-0.014,49.3,-0.271,-0.528..-0.013,False
+touch <= 10 candles after BoS,20,306,-0.257,46.7,-0.015,49.2,-0.242,-0.587..+0.108,True
+touch <= 10 candles after BoS,50,306,-0.144,51.0,-0.059,48.6,-0.085,-0.704..+0.542,True
+touch > 10 candles after BoS,5,684,-0.014,51.8,-0.014,49.3,0.0,-0.168..+0.161,True
+touch > 10 candles after BoS,10,684,0.097,53.2,-0.002,50.1,0.1,-0.101..+0.301,True
+touch > 10 candles after BoS,20,684,0.056,52.0,-0.019,50.4,0.075,-0.186..+0.334,True
+touch > 10 candles after BoS,50,684,-0.247,49.0,-0.018,49.8,-0.228,-0.640..+0.170,True
